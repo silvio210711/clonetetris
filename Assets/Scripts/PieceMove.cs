@@ -5,6 +5,8 @@ public class PieceMove : MonoBehaviour
 {
     [SerializeField] float timeCount;
     float count;
+    [SerializeField] float timeCountFlip;
+    float countFlip;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -15,10 +17,15 @@ public class PieceMove : MonoBehaviour
     void Update()
     {
         Move();
+        Flip();
 
         if (count > 0)
         {
             count -= Time.deltaTime;
+        }
+        if (countFlip > 0)
+        {
+            countFlip -= Time.deltaTime;
         }
     }
 
@@ -35,5 +42,13 @@ public class PieceMove : MonoBehaviour
         {
             count = 0;
         }
-    } 
+    }
+    void Flip()
+    {
+        if (InputManeger.GetFlipInput() && countFlip <= 0)            
+        {
+            countFlip = timeCountFlip;
+            transform.Rotate(0, 0, 90);
+        }
+    }
 }
