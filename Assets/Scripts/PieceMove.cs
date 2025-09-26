@@ -3,6 +3,8 @@ using UnityEngine.UIElements;
 
 public class PieceMove : MonoBehaviour
 {
+    float fall;
+
     [SerializeField] float timeCount;
     float count;
     [SerializeField] float timeCountFlip;
@@ -18,6 +20,7 @@ public class PieceMove : MonoBehaviour
     {
         Move();
         Flip();
+        PieceFall();
 
         if (count > 0)
         {
@@ -45,10 +48,20 @@ public class PieceMove : MonoBehaviour
     }
     void Flip()
     {
-        if (InputManeger.GetFlipInput() && countFlip <= 0)            
+        if (InputManeger.GetFlipInput() && countFlip <= 0)
         {
             countFlip = timeCountFlip;
             transform.Rotate(0, 0, 90);
         }
     }
+    void PieceFall()
+    {
+        if (Time.time - fall >= GameController.instance.Speed)
+        {
+            transform.position += new Vector3(0, -1, 0);
+            fall = Time.time;
+        }
+    }
+    
 }
+
