@@ -16197,7 +16197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeCount: 0.1
-  timeCountFlip: 0.1
 --- !u!1 &871940272
 GameObject:
   m_ObjectHideFlags: 0

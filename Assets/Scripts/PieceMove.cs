@@ -3,12 +3,18 @@ using UnityEngine.UIElements;
 
 public class PieceMove : MonoBehaviour
 {
+    #region variaveis
     float fall;
 
     [SerializeField] float timeCount;
     float count;
-    [SerializeField] float timeCountFlip;
+    //[SerializeField] float timeCountFlip;
     float countFlip;
+
+    //[SerializeField] float timeCountDown;
+    float countDown;
+    #endregion
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,20 +27,30 @@ public class PieceMove : MonoBehaviour
         Move();
         Flip();
         PieceFall();
+        count = UpdateTimer(count);
+        countDown = UpdateTimer(countDown);
+        countFlip = UpdateTimer(countFlip);
 
-        if (count > 0)
+        // if (count > 0)
+        // {
+        //     count -= Time.deltaTime;
+        // }
+        // if (countFlip > 0)
+        // {
+        //     countFlip -= Time.deltaTime;
+        // }
+
+        if (countDown > 0)
         {
-            count -= Time.deltaTime;
+            countDown -= Time.deltaTime;
         }
-        if (countFlip > 0)
-        {
-            countFlip -= Time.deltaTime;
-        }
+
     }
 
     void Move()
     {
         float horizontal = InputManeger.GetMovementInput().x;
+        float vertical = InputManeger.GetMovementInput().y;
 
         if (horizontal != 0 && count <= 0)
         {
@@ -45,12 +61,18 @@ public class PieceMove : MonoBehaviour
         {
             count = 0;
         }
+
+        if (vertical == -1 && countDown <= 0)
+        {
+            transform.position += new Vector3(0, -1, 0);
+            countDown = timeCount;
+        }
     }
     void Flip()
     {
         if (InputManeger.GetFlipInput() && countFlip <= 0)
         {
-            countFlip = timeCountFlip;
+            countFlip = timeCount;
             transform.Rotate(0, 0, 90);
         }
     }
@@ -61,6 +83,14 @@ public class PieceMove : MonoBehaviour
             transform.position += new Vector3(0, -1, 0);
             fall = Time.time;
         }
+    }
+    float UpdateTimer(float timer)
+    {
+        if (timer > 0)
+        {
+            timer -= Time.deltaTime;
+        }
+        return timer;
     }
     
 }
