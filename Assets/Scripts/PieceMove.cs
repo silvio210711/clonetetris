@@ -56,6 +56,25 @@ public class PieceMove : MonoBehaviour
         {
             count = timeCount;
             transform.position += new Vector3(horizontal, 0, 0);
+
+            if (validatePosition())
+            {
+
+            }
+            else
+                {
+                    if (horizontal == 1)
+                    {
+                        transform.position += new Vector3(-1, 0, 0);
+
+                    }
+
+                    if (horizontal == -1)
+                    {
+                        transform.position += new Vector3(1, 0, 0);
+                            
+                    }
+                }
         }
         if (horizontal == 0)
         {
@@ -66,6 +85,16 @@ public class PieceMove : MonoBehaviour
         {
             transform.position += new Vector3(0, -1, 0);
             countDown = timeCount;
+
+            if (validatePosition())
+            {
+
+            }
+            else
+                {
+                    transform.position += new Vector3(0, 1,0);
+
+                }
         }
     }
     void Flip()
@@ -82,6 +111,17 @@ public class PieceMove : MonoBehaviour
         {
             transform.position += new Vector3(0, -1, 0);
             fall = Time.time;
+
+
+            if (validatePosition())
+            {
+
+            }
+            else
+                {
+                    transform.position += new Vector3(0, 1,0);
+
+                }
         }
     }
     float UpdateTimer(float timer)
@@ -91,6 +131,21 @@ public class PieceMove : MonoBehaviour
             timer -= Time.deltaTime;
         }
         return timer;
+    }
+
+    bool validatePosition()
+
+    {
+        foreach(Transform child in transform)
+        {
+            Vector2 blockPos =
+            GameController.instance.Round(child.position);
+            if (!GameController.instance.InsideGrid(blockPos))
+            {
+                return false;
+
+            }
+        } return true;
     }
     
 }
