@@ -13,6 +13,9 @@ public class PieceMove : MonoBehaviour
 
     //[SerializeField] float timeCountDown;
     float countDown;
+
+    [SerializeField] bool canRotate;
+    [SerializeField] bool Rotate360;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -52,30 +55,62 @@ public class PieceMove : MonoBehaviour
         float horizontal = InputManeger.GetMovementInput().x;
         float vertical = InputManeger.GetMovementInput().y;
 
-        if (horizontal != 0 && count <= 0)
+        // if (horizontal != 0 && count <= 0)
+        // {
+        //     count = timeCount;
+        //     transform.position += new Vector3(horizontal, 0, 0);
+
+        //     if (validatePosition())
+        //     {
+
+        //     }
+        //     else
+        //         {
+        //             if (horizontal == 1)
+        //             {
+        //                 transform.position += new Vector3(-1, 0, 0);
+
+        //             }
+
+        //             if (horizontal == -1)
+        //             {
+        //                 transform.position += new Vector3(1, 0, 0);
+
+        //             }
+        //         }
+        // }
+
+        if (horizontal == 1 && count <= 0)
         {
+            transform.position += new Vector3(1, 0, 0);
             count = timeCount;
-            transform.position += new Vector3(horizontal, 0, 0);
 
             if (validatePosition())
             {
-
+                GameController.instance.UpdateGrid(this);
             }
             else
-                {
-                    if (horizontal == 1)
-                    {
-                        transform.position += new Vector3(-1, 0, 0);
-
-                    }
-
-                    if (horizontal == -1)
-                    {
-                        transform.position += new Vector3(1, 0, 0);
-                            
-                    }
-                }
+            {
+                transform.position += new Vector3(-1, 0, 0);
+            }
         }
+
+
+        if (horizontal == -1 && count <= 0)
+        {
+            transform.position += new Vector3(-1, 0, 0);
+            count = timeCount;
+
+            if (validatePosition())
+            {
+                GameController.instance.UpdateGrid(this);
+            }
+            else
+            {
+                transform.position += new Vector3(1, 0, 0);
+            }
+        }
+
         if (horizontal == 0)
         {
             count = 0;
@@ -88,11 +123,12 @@ public class PieceMove : MonoBehaviour
 
             if (validatePosition())
             {
-
+                GameController.instance.UpdateGrid(this);
             }
             else
                 {
-                    transform.position += new Vector3(0, 1,0);
+                transform.position += new Vector3(0, 1, 0);
+                enabled = false;
 
                 }
         }
@@ -102,25 +138,36 @@ public class PieceMove : MonoBehaviour
         if (InputManeger.GetFlipInput() && countFlip <= 0)
         {
             countFlip = timeCount;
-            transform.Rotate(0, 0, 90);
+            // transform.Rotate(0, 0, 90);
+
+            // if (validatePosition())
+            // {
+            //     GameController.instance.UpdateGrid(this);
+            // }
+            // else
+            // {
+            //     transform.Rotate(0, 0, -90);
+            // }
+            checkRotate(); 
+            
         }
     }
     void PieceFall()
     {
         if (Time.time - fall >= GameController.instance.Speed)
         {
-            transform.position += new Vector3(0, -1, 0);
+            transform.position += new Vector3(0, -1, 0);            
             fall = Time.time;
 
 
             if (validatePosition())
             {
-
+                GameController.instance.UpdateGrid(this);
             }
             else
                 {
                     transform.position += new Vector3(0, 1,0);
-
+                    enabled = false;
                 }
         }
     }
@@ -136,7 +183,7 @@ public class PieceMove : MonoBehaviour
     bool validatePosition()
 
     {
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             Vector2 blockPos =
             GameController.instance.Round(child.position);
@@ -145,7 +192,61 @@ public class PieceMove : MonoBehaviour
                 return false;
 
             }
-        } return true;
+
+            if (GameController.instance.TransformGridPosition(blockPos) != null &&
+                GameController.instance.TransformGridPosition(blockPos).parent !=
+            transform)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    void checkRotate()
+    {
+        if(canRotate)
+        {
+            if (!Rotate360)
+            {
+                if (transform.rotation.z < 0)
+                {
+                    transform.Rotate(0, 0, 90);
+                    if (validatePosition())
+                    {
+                        GameController.instance.UpdateGrid(this);
+                    }
+                    else
+                    {
+                        transform.Rotate(0, 0, -90);
+                    }
+                }
+                else
+                {
+                    transform.Rotate(0, 0, -90);
+                    if (validatePosition())
+                    {
+                        GameController.instance.UpdateGrid(this);
+                    }
+                    else
+                    {
+                        transform.Rotate(0, 0, 90);
+                    }
+                }
+            }
+            else
+            {
+                transform.Rotate(0, 0, -90);
+                if (validatePosition())
+                {
+                    GameController.instance.UpdateGrid(this);
+                }
+                else
+                {
+                    transform.Rotate(0, 0, 90);
+                }
+            }
+        }   
     }
     
 }

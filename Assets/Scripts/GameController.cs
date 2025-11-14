@@ -41,4 +41,45 @@ public class GameController : MonoBehaviour
         Mathf.Round(position.y));
     }
 
+    public Transform TransformGridPosition(Vector2 position)
+    {
+        if (position.y > heigth - 1)
+        {
+            return null;
+        }
+        else
+        {
+            return grid[(int)position.x, (int)position.y];
+        }
+
+
+    }
+
+    public void UpdateGrid(PieceMove pieceTetris)
+    {
+        for (int y = 0; y < heigth; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (grid[x, y] != null)
+                {
+                    if (grid[x, y].parent == pieceTetris.transform)
+                    {
+                        grid[x, y] = null;
+                    }
+                }
+            }
+        }
+        
+        foreach (Transform piece in pieceTetris.transform)
+        {
+            Vector2 position = Round(piece.position);
+            if (position.y < heigth)
+            {
+                grid[(int)position.x, (int)position.y] = piece;
+            
+            }
+        }
+    }
+
 }
