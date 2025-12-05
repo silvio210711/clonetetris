@@ -16,12 +16,15 @@ public class PieceMove : MonoBehaviour
 
     [SerializeField] bool canRotate;
     [SerializeField] bool Rotate360;
+
+    [SerializeField] SpawnTetro spawnTetro;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        spawnTetro = GameObject.FindFirstObjectByType<SpawnTetro>();
+        spawnTetro.setNextPieceStatus(false);
     }
 
     // Update is called once per frame
@@ -43,10 +46,10 @@ public class PieceMove : MonoBehaviour
         //     countFlip -= Time.deltaTime;
         // }
 
-        if (countDown > 0)
-        {
-            countDown -= Time.deltaTime;
-        }
+        // if (countDown > 0)
+        // {
+        //     countDown -= Time.deltaTime;
+        // }
 
     }
 
@@ -126,11 +129,12 @@ public class PieceMove : MonoBehaviour
                 GameController.instance.UpdateGrid(this);
             }
             else
-                {
+            {
                 transform.position += new Vector3(0, 1, 0);
                 enabled = false;
-
-                }
+                spawnTetro.setNextPieceStatus(true);
+                GameController.instance.DeleteLine();
+            }
         }
     }
     void Flip()
@@ -165,10 +169,12 @@ public class PieceMove : MonoBehaviour
                 GameController.instance.UpdateGrid(this);
             }
             else
-                {
-                    transform.position += new Vector3(0, 1,0);
-                    enabled = false;
-                }
+            {
+                transform.position += new Vector3(0, 1,0);
+                enabled = false;
+                spawnTetro.setNextPieceStatus(true);
+                GameController.instance.DeleteLine();   
+            }
         }
     }
     float UpdateTimer(float timer)
