@@ -30,12 +30,15 @@ public class PieceMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!GameController.instance.IsPaused)
+        {
         Move();
         Flip();
         PieceFall();
         count = UpdateTimer(count);
         countDown = UpdateTimer(countDown);
         countFlip = UpdateTimer(countFlip);
+        }
 
         // if (count > 0)
         // {

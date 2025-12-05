@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using NUnit.Framework;
 
 public class GameController : MonoBehaviour
 {
@@ -8,10 +10,12 @@ public class GameController : MonoBehaviour
     static int width = 10;
     static Transform[,] grid = new Transform[width, heigth];
     private int[] indexLine = new int[4];
+    [SerializeField] bool isPaused;
 
     public static GameController instance;
 
     public float Speed { get { return speed; } }
+    public bool IsPaused {get{return isPaused;}}
 
     void Awake()
     {
@@ -101,8 +105,9 @@ public class GameController : MonoBehaviour
         for(int x = 0; x < width; x++)
         {
             grid[x, y].GetComponent<SpriteRenderer>().enabled = false;
+            grid[x,y].GetComponentInChildren<ParticleSystem>().Play();
 
-            Destroy(grid[x, y].gameObject);
+            Destroy(grid[x, y].gameObject,1f);
 
             grid[x, y] = null;
         }
@@ -110,31 +115,32 @@ public class GameController : MonoBehaviour
 
     public void DeleteLine()
     {
-        for(int y = 0; y < heigth; y++)
-        {
-            if (FullLine(y))
-            {
-                for(int i = 0; i < indexLine.Length; i++)
-                {
-                    if(indexLine[i] < 0)
-                    {
-                        indexLine[i] = 0;
-                        break;
-                    }
-                }
-                DeleteSquare(y);
-                y--;
-            }
-        }
+    //     for(int y = 0; y < heigth; y++)
+    //     {
+    //         if (FullLine(y))
+    //         {
+    //             for(int i = 0; i < indexLine.Length; i++)
+    //             {
+    //                 if(indexLine[i] < 0)
+    //                 {
+    //                     indexLine[i] = 0;
+    //                     break;
+    //                 }
+    //             }
+    //             DeleteSquare(y);
+    //             y--;
+    //         }
+    //     }
 
-        for(int i = indexLine.Length - 1; i >= 0; i--)
-        {
-            if(indexLine[i] >= 0)
-            {
-                MoveAllLinesDown(indexLine[i] + 1);
-                indexLine[i] = -1;
-            }
-        }
+    //     for(int i = indexLine.Length - 1; i >= 0; i--)
+    //     {
+    //         if(indexLine[i] >= 0)
+    //         {
+    //             MoveAllLinesDown(indexLine[i] + 1);
+    //             indexLine[i] = -1;
+    //         }
+    //     }
+    StartCoroutine(WaintingTime());
     }
 
     public void MoveLineDown(int y)
@@ -158,4 +164,38 @@ public class GameController : MonoBehaviour
             MoveLineDown(i);
         }
     }
+
+    IEnumerator WaintingTime()
+    {
+        for(int y =0; y <heigth; y++)
+        {
+            if(FullLine(y))
+            {
+                isPaused = true;
+                for (int i = 0; i < indexLine.Length; i++)
+                {
+                    if(indexLine[i]<0)
+                    {
+                        indexLine[i] = y;
+                        break;
+                    }
+                }
+                DeleteSquare(y);
+                y--;
+            }
+        }
+
+        yield return new WaitForSeconds(1.1f);
+
+        for(int i = indexLine.Length -1; i >=0;i--)
+        {
+            if(indexLine[i]>=0)
+            {
+              MoveAllLinesDown(indexLine[i]+1);
+              indexLine[i] = -1;  
+            }
+        }
+
+        isPaused = false;
+    }  
 }
