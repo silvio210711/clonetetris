@@ -18,6 +18,7 @@ public class PieceMove : MonoBehaviour
     [SerializeField] bool Rotate360;
 
     [SerializeField] SpawnTetro spawnTetro;
+    [SerializeField] GameObject ghost;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -25,6 +26,7 @@ public class PieceMove : MonoBehaviour
     {
         spawnTetro = GameObject.FindFirstObjectByType<SpawnTetro>();
         spawnTetro.setNextPieceStatus(false);
+        Instantiate(ghost,new Vector3(transform.position.x,transform.position.y -22,transform.position.z),transform.rotation);
     }
 
     // Update is called once per frame
@@ -133,6 +135,7 @@ public class PieceMove : MonoBehaviour
             }
             else
             {
+                GameController.instance.AddScore(10);
                 transform.position += new Vector3(0, 1, 0);
                 enabled = false;
                 spawnTetro.setNextPieceStatus(true);
@@ -161,7 +164,7 @@ public class PieceMove : MonoBehaviour
     }
     void PieceFall()
     {
-        if (Time.time - fall >= GameController.instance.Speed)
+        if (Time.time - fall >= GameController.instance.Speed/GameController.instance.Difficulty)
         {
             transform.position += new Vector3(0, -1, 0);            
             fall = Time.time;
@@ -173,6 +176,7 @@ public class PieceMove : MonoBehaviour
             }
             else
             {
+                GameController.instance.AddScore(10);
                 transform.position += new Vector3(0, 1,0);
                 enabled = false;
                 spawnTetro.setNextPieceStatus(true);

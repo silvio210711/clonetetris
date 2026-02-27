@@ -48,4 +48,8 @@ public class InputManeger : MonoBehaviour
     {
         return instance.flipInput;
     }
+    public void OnPause(InputValue Value)
+    {
+        GameController.instance.PauseGame();
+    }
 } 
